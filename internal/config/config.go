@@ -42,6 +42,35 @@ func Load() (*Config, error) {
 	return &cfg, nil
 }
 
+// Exists reports whether a config file is already present.
+func Exists() (bool, error) {
+	path, err := configPath()
+	if err != nil {
+		return false, err
+	}
+	_, err = os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+// LoadOrNew loads the existing config, or returns an empty one if none exists
+// yet. Useful for importing a key before R2 credentials are configured.
+func LoadOrNew() (*Config, error) {
+	cfg, err := Load()
+	if err != nil {
+		if os.IsNotExist(err) {
+			return &Config{}, nil
+		}
+		return nil, err
+	}
+	return cfg, nil
+}
+
 func Save(cfg *Config) error {
 	path, err := configPath()
 	if err != nil {
@@ -61,6 +90,14 @@ func GenerateKey() (string, error) {
 	key := make([]byte, 32)
 	if _, err := rand.Read(key); err != nil {
 		return "", fmt.Errorf("failed to generate random key: %w", err)
+	}
+	return base64.StdEncoding.EncodeToString(key), nil
+}
+
+// EncodeKey encodes a raw 32-byte key to the base64 form stored in config.
+func EncodeKey(key []byte) (string, error) {
+	if len(key) != 32 {
+		return "", fmt.Errorf("key must be 32 bytes, got %d", len(key))
 	}
 	return base64.StdEncoding.EncodeToString(key), nil
 }
