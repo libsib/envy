@@ -12,7 +12,7 @@ import (
 )
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete a key .env file",
+	Use:   "delete <name>",
 	Short: "Delete a key with .env file within it.",
 	Args: cobra.ExactArgs(1),
 	RunE:  runDelete,
