@@ -33,7 +33,7 @@ func runPush(cmd *cobra.Command, args []string) error {
 	// create a key first?
 	decrypted_key, err := config.Decodekey(cfg.Encryptionkey)
 	if err != nil {
-		return fmt.Errorf("failed to read %s: %w", env_file, err)
+		return fmt.Errorf("invalid encryption key in config: %w", err)
 	}
 
 	// read the file

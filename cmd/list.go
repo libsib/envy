@@ -10,7 +10,7 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list envs",
+	Use:   "list",
 	Short: "List all envs stored in your bucket",
 	RunE:  runList,
 }
